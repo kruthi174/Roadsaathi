@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoadSaathi — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFEAE0;
+    --paper-soft:#F7F4EC;
+    --ink:#1E2A24;
+    --ink-soft:#4B5A52;
+    --hwy-green:#0F7A5E;
+    --hwy-green-dark:#0B5F49;
+    --signal-amber:#E9A23B;
+    --alert-red:#C1432E;
+    --line:#D8D2C2;
+    --white:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .display{font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:0.02em;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- PITCH HEADER ---------- */
+  .pitch{
+    max-width:1040px;
+    margin:0 auto;
+    padding:64px 28px 40px;
+  }
+  .eyebrow{
+    display:flex; align-items:center; gap:10px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--hwy-green-dark); font-weight:600;
+    margin-bottom:18px;
+  }
+  .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--signal-amber);}
+  .pitch h1{
+    font-size:clamp(38px,6vw,64px);
+    line-height:0.98;
+    margin:0 0 20px;
+    color:var(--ink);
+  }
+  .pitch h1 span{color:var(--hwy-green);}
+  .pitch p.lede{
+    font-size:18px; line-height:1.6; color:var(--ink-soft);
+    max-width:620px; margin:0 0 30px;
+  }
+  .stat-strip{
+    display:flex; flex-wrap:wrap; gap:0;
+    border-top:2px solid var(--ink);
+    border-bottom:2px solid var(--ink);
+    margin-top:36px;
+  }
+  .stat{
+    flex:1; min-width:140px;
+    padding:18px 20px;
+    border-right:1px solid var(--line);
+  }
+  .stat:last-child{border-right:none;}
+  .stat .num{font-family:'Oswald',sans-serif; font-size:30px; color:var(--hwy-green-dark); font-weight:600;}
+  .stat .label{font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.06em; margin-top:4px;}
+
+  /* ---------- MILESTONE SIGNATURE STRIP ---------- */
+  .milestone{
+    background:var(--ink);
+    color:var(--paper);
+    padding:14px 28px;
+    overflow:hidden;
+    white-space:nowrap;
+    border-top:6px solid var(--signal-amber);
+    border-bottom:6px solid var(--signal-amber);
+  }
+  .milestone-track{
+    display:inline-flex; gap:48px;
+    animation:scroll 22s linear infinite;
+  }
+  .milestone-item{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px; letter-spacing:0.08em;
+    display:flex; align-items:center; gap:10px;
+    color:var(--paper);
+  }
+  .milestone-item b{color:var(--signal-amber); font-size:15px;}
+  @keyframes scroll{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+
+  /* ---------- PROTOTYPE SECTION ---------- */
+  .proto-section{
+    max-width:1040px;
+    margin:0 auto;
+    padding:56px 28px 90px;
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:48px;
+  }
+  @media (max-width:760px){
+    .proto-section{grid-template-columns:1fr; }
+  }
+  .proto-side h2{
+    font-size:26px; margin:0 0 14px;
+  }
+  .proto-side p{
+    color:var(--ink-soft); font-size:14.5px; line-height:1.6; margin-bottom:24px;
+  }
+  .mode-toggle{
+    display:flex; border:2px solid var(--ink); border-radius:8px; overflow:hidden; margin-bottom:24px;
+  }
+  .mode-btn{
+    flex:1; padding:10px 8px; background:var(--paper-soft); border:none; cursor:pointer;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.05em;
+    color:var(--ink); font-weight:600; border-right:2px solid var(--ink);
+  }
+  .mode-btn:last-child{border-right:none;}
+  .mode-btn.active{background:var(--ink); color:var(--paper);}
+
+  .screen-nav{display:flex; flex-direction:column; gap:6px;}
+  .screen-nav button{
+    text-align:left;
+    padding:12px 14px;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-left:4px solid transparent;
+    cursor:pointer;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    border-radius:2px;
+  }
+  .screen-nav button.active{
+    border-left:4px solid var(--hwy-green);
+    color:var(--ink);
+    font-weight:600;
+    background:var(--paper-soft);
+  }
+  .screen-nav .step-num{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--hwy-green-dark);
+    margin-right:8px;
+  }
+
+  /* ---------- PHONE FRAME ---------- */
+  .phone-wrap{display:flex; justify-content:center;}
+  .phone{
+    width:320px;
+    height:660px;
+    background:var(--ink);
+    border-radius:38px;
+    padding:12px;
+    box-shadow:0 30px 60px -20px rgba(30,42,36,0.45);
+    position:relative;
+  }
+  .phone-screen{
+    width:100%; height:100%;
+    background:var(--paper-soft);
+    border-radius:28px;
+    overflow:hidden;
+    position:relative;
+  }
+  .notch{
+    position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:120px; height:22px; background:var(--ink); border-radius:0 0 14px 14px; z-index:5;
+  }
+  .app-screen{
+    position:absolute; inset:0;
+    display:none;
+    flex-direction:column;
+    padding:34px 16px 16px;
+    opacity:0;
+    animation:fadeIn 0.25s ease forwards;
+  }
+  .app-screen.active{display:flex; opacity:1;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .status-row{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .status-row .brand{font-family:'Oswald',sans-serif; font-size:15px; font-weight:600; letter-spacing:0.03em;}
+  .status-row .brand span{color:var(--hwy-green);}
+  .pin-badge{
+    display:flex; align-items:center; gap:5px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft);
+    background:var(--white); padding:5px 8px; border-radius:20px; border:1px solid var(--line);
+  }
+
+  .map-area{
+    height:180px; border-radius:14px; background:
+      linear-gradient(135deg, #E4DECC 25%, #D9D2BC 25%, #D9D2BC 50%, #E4DECC 50%, #E4DECC 75%, #D9D2BC 75%);
+    background-size:22px 22px;
+    position:relative; overflow:hidden; margin-bottom:16px; border:1px solid var(--line);
+  }
+  .map-road{
+    position:absolute; top:50%; left:-10%; width:120%; height:14px; background:var(--ink); transform:rotate(-8deg) translateY(-50%);
+  }
+  .map-road::after{
+    content:""; position:absolute; top:50%; left:0; width:100%; height:2px; background:repeating-linear-gradient(90deg, var(--signal-amber) 0 10px, transparent 10px 20px); transform:translateY(-50%);
+  }
+  .pulse-dot{
+    position:absolute; width:14px; height:14px; border-radius:50%; background:var(--alert-red);
+    top:60%; left:30%; box-shadow:0 0 0 0 rgba(193,67,46,0.6); animation:pulse 1.6s infinite;
+  }
+  .pulse-dot.you{background:var(--hwy-green); top:35%; left:65%; animation-delay:0.4s;}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(193,67,46,0.5);}
+    70%{box-shadow:0 0 0 14px rgba(193,67,46,0);}
+    100%{box-shadow:0 0 0 0 rgba(193,67,46,0);}
+  }
+
+  .section-label{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--ink-soft); margin:4px 0 10px;
+  }
+
+  .service-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:14px;}
+  .service-tile{
+    background:var(--white); border:1px solid var(--line); border-radius:10px;
+    padding:12px 6px; text-align:center; cursor:pointer;
+  }
+  .service-tile.selected{border-color:var(--hwy-green); background:#E7F3EE;}
+  .service-tile .ic{font-size:20px; margin-bottom:4px; display:block;}
+  .service-tile .lbl{font-size:10.5px; font-weight:600; color:var(--ink);}
+
+  .sos-btn{
+    margin-top:auto;
+    background:var(--alert-red); color:var(--white);
+    border:none; border-radius:12px; padding:16px; text-align:center;
+    font-family:'Oswald',sans-serif; font-size:16px; letter-spacing:0.04em;
+    cursor:pointer;
+  }
+  .sos-btn small{display:block; font-family:'IBM Plex Sans'; font-size:10.5px; font-weight:400; opacity:0.85; margin-top:2px; text-transform:none; letter-spacing:0;}
+
+  .quote-card{
+    background:var(--white); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:12px;
+  }
+  .quote-row{display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px dashed var(--line);}
+  .quote-row:last-child{border-bottom:none; font-weight:700; font-size:15px; padding-top:10px;}
+  .provider-card{
+    display:flex; gap:10px; align-items:center;
+    background:var(--white); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:10px;
+  }
+  .avatar{width:38px; height:38px; border-radius:50%; background:var(--hwy-green); color:white; display:flex; align-items:center; justify-content:center; font-family:'Oswald'; font-weight:600;}
+  .provider-card .pname{font-size:13px; font-weight:700;}
+  .provider-card .pmeta{font-size:11px; color:var(--ink-soft);}
+  .eta-chip{margin-left:auto; background:var(--paper); border-radius:8px; padding:6px 8px; font-family:'IBM Plex Mono'; font-size:11px; font-weight:600; color:var(--hwy-green-dark);}
+
+  .confirm-btn{
+    background:var(--hwy-green); color:white; border:none; border-radius:10px; padding:14px;
+    font-family:'Oswald'; font-size:14px; letter-spacing:0.03em; text-align:center; cursor:pointer; margin-top:auto;
+  }
+  .ghost-btn{
+    background:transparent; border:1.5px solid var(--ink); border-radius:10px; padding:10px; text-align:center;
+    font-size:12.5px; font-weight:600; cursor:pointer; margin-top:8px;
+  }
+  .track-progress{display:flex; align-items:center; gap:4px; margin:10px 0 16px;}
+  .track-dot{width:9px; height:9px; border-radius:50%; background:var(--hwy-green);}
+  .track-dot.dim{background:var(--line);}
+  .track-line{flex:1; height:2px; background:var(--hwy-green);}
+  .track-line.dim{background:var(--line);}
+
+  .job-card{
+    background:var(--white); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px;
+  }
+  .job-card .top{display:flex; justify-content:space-between; margin-bottom:6px;}
+  .job-tag{font-family:'IBM Plex Mono'; font-size:10px; background:var(--signal-amber); color:var(--ink); padding:3px 8px; border-radius:20px; font-weight:600;}
+  .job-price{font-family:'Oswald'; font-weight:600; color:var(--hwy-green-dark);}
+  .accept-row{display:flex; gap:8px; margin-top:8px;}
+  .accept-row button{flex:1; padding:9px; border-radius:8px; border:none; font-weight:600; font-size:12px; cursor:pointer;}
+  .accept-row .accept{background:var(--hwy-green); color:white;}
+  .accept-row .decline{background:var(--paper); border:1px solid var(--line); color:var(--ink-soft);}
+
+  footer{
+    max-width:1040px; margin:0 auto; padding:0 28px 60px;
+    color:var(--ink-soft); font-size:13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="pitch">
+  <div class="eyebrow"><span class="dot"></span> Prototype — Not final UI, built to demonstrate the concept</div>
+  <h1>RoadSaathi<br><span>Har kilometre pe madad.</span></h1>
+  <p class="lede">An on-demand roadside assistance platform for India — built two-wheeler-first, EV-native, and highway-safety-aware. This is a clickable prototype: use the panel below to walk through the actual customer and provider flows before a single line of production code is written.</p>
+  <div class="stat-strip">
+    <div class="stat"><div class="num">6</div><div class="label">Core services</div></div>
+    <div class="stat"><div class="num">2W+4W+EV</div><div class="label">Vehicle coverage</div></div>
+    <div class="stat"><div class="num">&lt;30 min</div><div class="label">Target dispatch</div></div>
+    <div class="stat"><div class="num">1 city</div><div class="label">Launch scope</div></div>
+  </div>
+</div>
+
+<div class="milestone">
+  <div class="milestone-track">
+    <div class="milestone-item"><b>12 KM</b> Nearest provider found</div>
+    <div class="milestone-item"><b>UPI</b> Upfront price, no surprises</div>
+    <div class="milestone-item"><b>EV</b> Mobile charging support</div>
+    <div class="milestone-item"><b>SOS</b> Live share with family</div>
+    <div class="milestone-item"><b>24×7</b> Highway coverage</div>
+    <div class="milestone-item"><b>12 KM</b> Nearest provider found</div>
+    <div class="milestone-item"><b>UPI</b> Upfront price, no surprises</div>
+    <div class="milestone-item"><b>EV</b> Mobile charging support</div>
+    <div class="milestone-item"><b>SOS</b> Live share with family</div>
+    <div class="milestone-item"><b>24×7</b> Highway coverage</div>
+  </div>
+</div>
+
+<div class="proto-section">
+  <div class="proto-side">
+    <h2>Walk through it</h2>
+    <p>Toggle between the rider app and the provider app, then click each step to move through the real flow.</p>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="setMode('customer')">Rider App</button>
+      <button class="mode-btn" onclick="setMode('provider')">Provider App</button>
+    </div>
+
+    <div class="screen-nav" id="customerNav">
+      <button class="active" onclick="showScreen('c1')"><span class="step-num">01</span>Home / SOS</button>
+      <button onclick="showScreen('c2')"><span class="step-num">02</span>Price & provider match</button>
+      <button onclick="showScreen('c3')"><span class="step-num">03</span>Live tracking</button>
+    </div>
+
+    <div class="screen-nav" id="providerNav" style="display:none;">
+      <button class="active" onclick="showScreen('p1')"><span class="step-num">01</span>Incoming job</button>
+      <button onclick="showScreen('p2')"><span class="step-num">02</span>En route & earnings</button>
+    </div>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="notch"></div>
+
+        <!-- CUSTOMER SCREEN 1 -->
+        <div class="app-screen active" id="c1">
+          <div class="status-row">
+            <div class="brand">Road<span>Saathi</span></div>
+            <div class="pin-badge">📍 Whitefield, BLR</div>
+          </div>
+          <div class="map-area"><div class="map-road"></div><div class="pulse-dot"></div></div>
+          <div class="section-label">What's the problem?</div>
+          <div class="service-grid">
+            <div class="service-tile selected" onclick="selectTile(this)"><span class="ic">🔋</span><span class="lbl">Jump Start</span></div>
+            <div class="service-tile" onclick="selectTile(this)"><span class="ic">🛞</span><span class="lbl">Flat Tyre</span></div>
+            <div class="service-tile" onclick="selectTile(this)"><span class="ic">⛽</span><span class="lbl">Fuel Delivery</span></div>
+            <div class="service-tile" onclick="selectTile(this)"><span class="ic">🚚</span><span class="lbl">Towing</span></div>
+            <div class="service-tile" onclick="selectTile(this)"><span class="ic">🔌</span><span class="lbl">EV Charge</span></div>
+            <div class="service-tile" onclick="selectTile(this)"><span class="ic">🔑</span><span class="lbl">Lockout</span></div>
+          </div>
+          <button class="sos-btn" onclick="showScreen('c2')">GET HELP NOW<small>Jump Start · 2-Wheeler · ETA shown next</small></button>
+        </div>
+
+        <!-- CUSTOMER SCREEN 2 -->
+        <div class="app-screen" id="c2">
+          <div class="status-row">
+            <div class="brand">Road<span>Saathi</span></div>
+          </div>
+          <div class="section-label">Nearest match</div>
+          <div class="provider-card">
+            <div class="avatar">RK</div>
+            <div>
+              <div class="pname">Ravi Kumar</div>
+              <div class="pmeta">★ 4.8 · Jump Start · Bike & Scooter</div>
+            </div>
+            <div class="eta-chip">ETA 14m</div>
+          </div>
+          <div class="quote-card">
+            <div class="quote-row"><span>Service charge</span><span>₹149</span></div>
+            <div class="quote-row"><span>Convenience fee</span><span>₹20</span></div>
+            <div class="quote-row"><span>Total (pay via UPI)</span><span>₹169</span></div>
+          </div>
+          <div class="section-label">No surprises — price is locked before dispatch</div>
+          <button class="confirm-btn" onclick="showScreen('c3')">Confirm & Request Ravi</button>
+          <div class="ghost-btn" onclick="showScreen('c1')">← Back</div>
+        </div>
+
+        <!-- CUSTOMER SCREEN 3 -->
+        <div class="app-screen" id="c3">
+          <div class="status-row">
+            <div class="brand">Road<span>Saathi</span></div>
+            <div class="pin-badge">🔗 Trip shared</div>
+          </div>
+          <div class="map-area"><div class="map-road"></div><div class="pulse-dot"></div><div class="pulse-dot you"></div></div>
+          <div class="track-progress">
+            <div class="track-dot"></div><div class="track-line"></div>
+            <div class="track-dot"></div><div class="track-line dim"></div>
+            <div class="track-dot dim"></div>
+          </div>
+          <div class="section-label">Ravi is on the way · 14 min</div>
+          <div class="provider-card">
+            <div class="avatar">RK</div>
+            <div>
+              <div class="pname">Ravi Kumar</div>
+              <div class="pmeta">Verified · TN-09 · Call or chat</div>
+            </div>
+            <div class="eta-chip">📞</div>
+          </div>
+          <div class="ghost-btn" onclick="showScreen('c1')">Cancel request</div>
+        </div>
+
+        <!-- PROVIDER SCREEN 1 -->
+        <div class="app-screen" id="p1">
+          <div class="status-row">
+            <div class="brand">Road<span>Saathi</span> <span style="color:var(--ink-soft); font-size:10px;">PARTNER</span></div>
+            <div class="pin-badge">🟢 Online</div>
+          </div>
+          <div class="section-label">New job request</div>
+          <div class="job-card">
+            <div class="top"><span class="job-tag">Jump Start</span><span class="job-price">₹149</span></div>
+            <div class="pmeta" style="font-size:12px; color:var(--ink-soft);">📍 2.1 km away · Whitefield Main Rd</div>
+            <div class="pmeta" style="font-size:12px; color:var(--ink-soft);">🏍️ 2-Wheeler · Priya S.</div>
+            <div class="accept-row">
+              <button class="accept" onclick="showScreen('p2')">Accept</button>
+              <button class="decline">Decline</button>
+            </div>
+          </div>
+          <div class="section-label">Auto-declines in 25s if no response</div>
+        </div>
+
+        <!-- PROVIDER SCREEN 2 -->
+        <div class="app-screen" id="p2">
+          <div class="status-row">
+            <div class="brand">Road<span>Saathi</span> <span style="color:var(--ink-soft); font-size:10px;">PARTNER</span></div>
+          </div>
+          <div class="map-area"><div class="map-road"></div><div class="pulse-dot"></div><div class="pulse-dot you"></div></div>
+          <div class="section-label">En route to Priya S. · 2.1 km</div>
+          <div class="quote-card">
+            <div class="quote-row"><span>Today's jobs</span><span>6</span></div>
+            <div class="quote-row"><span>Today's earnings</span><span>₹1,020</span></div>
+            <div class="quote-row"><span>This job payout</span><span>₹127</span></div>
+          </div>
+          <button class="confirm-btn" onclick="showScreen('p1')">Mark as Arrived</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>RoadSaathi — clickable concept prototype. All names, ratings, and prices are placeholders for demonstration.</footer>
+
+<script>
+  let currentMode = 'customer';
+
+  function setMode(mode){
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('customerNav').style.display = mode === 'customer' ? 'flex' : 'none';
+    document.getElementById('providerNav').style.display = mode === 'provider' ? 'flex' : 'none';
+    document.getElementById('customerNav').style.flexDirection = 'column';
+    document.getElementById('providerNav').style.flexDirection = 'column';
+    showScreen(mode === 'customer' ? 'c1' : 'p1');
+  }
+
+  function showScreen(id){
+    document.querySelectorAll('.app-screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const nav = document.getElementById(currentMode === 'customer' ? 'customerNav' : 'providerNav');
+    nav.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+    const idx = currentMode === 'customer' ? ['c1','c2','c3'].indexOf(id) : ['p1','p2'].indexOf(id);
+    if(idx >= 0) nav.querySelectorAll('button')[idx].classList.add('active');
+  }
+
+  function selectTile(el){
+    el.parentElement.querySelectorAll('.service-tile').forEach(t=>t.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+</script>
+
+</body>
+</html>
